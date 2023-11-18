@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * An implementation of Graph.
@@ -30,7 +31,7 @@ public class ConcreteVerticesGraph implements Graph<String> {
     
     // TODO checkRep
     private void checkRep() {
-
+    	
     }
     
     
@@ -127,12 +128,18 @@ public class ConcreteVerticesGraph implements Graph<String> {
         return targets;
     }
     
-    // TODO toString()
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString();
+        StringBuilder result = new StringBuilder();
+
+        for (Vertex vertex : vertices) {
+            result.append(vertex.toString());
+        }
+
+        return result.toString();
     }
+
+
     
 }
 
@@ -165,11 +172,30 @@ class Vertex {
         checkRep();
     }
 
-    // TODO checkRep
-    private void checkRep() {
-        for (char symbol : symbols) assert this.label.charAt(0) == symbol;
-        for (Integer weight : maps.values()) assert weight > 0;
+//    // TODO checkRep
+//    private void checkRep() {
+//        for (char symbol : symbols) assert this.label.charAt(0) == symbol;
+//        for (Integer weight : maps.values()) assert weight > 0;
+//    }
+    
+    public void checkRep() {
+        // Check if the first character of the label is one of the allowed symbols
+        char firstChar = this.label.charAt(0);
+        boolean validSymbol = false;
+        for (char symbol : symbols) {
+            if (firstChar == symbol) {
+                validSymbol = true;
+                break;
+            }
+        }
+        assert validSymbol : "Vertex label must start with one of the allowed symbols";
+
+        // Check that all map weights are greater than 0
+        for (Integer weight : maps.values()) {
+            assert weight > 0 : "Map weights must be greater than 0";
+        }
     }
+
     
     // TODO methods
     /**
@@ -232,11 +258,20 @@ class Vertex {
     @Override
     public String toString() {
         String connectionMap = "";
-        connectionMap.concat(getLabel()).concat("\t->");
-        for (String label : maps.keySet()) {
-            connectionMap.concat(label).concat(", ");
+        connectionMap = connectionMap.concat(getLabel()).concat("\t->");
+
+        // Use a TreeMap to ensure a consistent order for the connections
+        Map<String, Integer> sortedMap = new TreeMap<>(maps);
+
+        for (String label : sortedMap.keySet()) {
+            connectionMap = connectionMap.concat(label).concat(", ");
         }
 
         return connectionMap;
     }
+
+    
+
+
+
 }

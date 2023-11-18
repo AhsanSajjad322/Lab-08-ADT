@@ -49,9 +49,9 @@ public abstract class GraphInstanceTest {
     //      edge num = 0, 1, n
     //      graph size = 1, n
     
-    private static final String vertex1 = "v1";
-    private static final String vertex2 = "v2";
-    private static final String vertex3 = "v3";
+    private static final String vertex1 = "@v1";
+    private static final String vertex2 = "@v2";
+    private static final String vertex3 = "@v3";
     
     private static final int weight0 = 0;
     private static final int weight1 = 1;
