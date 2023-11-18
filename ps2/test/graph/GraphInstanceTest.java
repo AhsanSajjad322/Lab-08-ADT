@@ -3,7 +3,6 @@
  */
 package graph;
 
-
 import static org.junit.Assert.*;
 
 import java.util.Collections;
@@ -22,33 +21,33 @@ import org.junit.Test;
  */
 public abstract class GraphInstanceTest {
     
-    // Testing strategy
-    //   TODO
-	// add():
+    // Testing strategy for each operation of Graph:
+    //
+    // add():
     //      vertex = in graph, not in graph
-    //      graph size = 0, n
+    //      graph size = 0, 1, n
     //
     // set():
     //      source,target = in graph, not in graph
     //      edge = new, modified
     //      weight = 0, n
-    //      graph size = 0, n
+    //      graph size = 0, 1, n
     //
     // remove():
     //      vertex = in graph, not in graph
-    //      graph size = 0, n
+    //      graph size = 0, 1, n
     //      vertex = has edges coming to, from, both
     //
     // vertices():
-    //      graph size = 0, n
+    //      graph size = 0, 1, n
     // 
     // sources():
     //      edge num = 0, 1, n
     //      graph size = 1, n
     //
     // targets():
-    //      edge num = 0, n
-    //      graph size = n
+    //      edge num = 0, 1, n
+    //      graph size = 1, n
     
     private static final String vertex1 = "v1";
     private static final String vertex2 = "v2";
@@ -71,16 +70,20 @@ public abstract class GraphInstanceTest {
         assert false; // make sure assertions are enabled with VM argument: -ea
     }
     
+    // test add()
+    
+    // covers vertex in graph
+    //        graph size = 1
     @Test
-    public void testInitialVerticesEmpty() {
-        // TODO you may use, change, or remove this test
-        assertEquals("expected new graph to have no vertices",
-                Collections.emptySet(), emptyInstance().vertices());
+    public void testAddInGraphOneSize() {
+        Graph<String> graph = emptyInstance();
+        graph.add(vertex1);
+        
+        assertFalse("expected False, graph already contains the vertex", graph.add(vertex1));
+        assertTrue("expected graph size 1", graph.vertices().size() == 1);
+        assertTrue("expected graph to contain the vertex", graph.vertices().contains(vertex1));
     }
     
-    // TODO other tests for instance methods of Graph
-    
-    // test add()
     // covers vertex not in graph
     //        graph size = 0
     @Test
@@ -105,7 +108,7 @@ public abstract class GraphInstanceTest {
     }
     
     // test set()
-   
+    
     // covers graph size = n
     //        target, source in graph
     //        new edge
@@ -174,11 +177,19 @@ public abstract class GraphInstanceTest {
         assertEquals("expected Graph containing edge", sources, graph.sources(vertex2));
     }
     
-    
-    
     // test remove()
     
     //covers vertex in graph
+    //       graph size = 1
+    @Test
+    public void testRemoveInGraphOneSize() {
+        Graph<String> graph = emptyInstance();
+        graph.add(vertex1);
+        
+        assertTrue("expected True, vertex in the Graph", graph.remove(vertex1));
+        assertTrue("expected empty graph", graph.vertices().size() == 0);
+    }
+    
     // covers vertex not in graph
     //        graph size = 0
     @Test
@@ -232,6 +243,17 @@ public abstract class GraphInstanceTest {
     public void testVerticesEmpty() {
         assertEquals("expected new graph to have no vertices", Collections.emptySet(), emptyInstance().vertices());
     }
+    
+    // covers graph size = 1
+    @Test
+    public void testVerticesOne() {
+        Graph<String> graph = emptyInstance();
+        graph.add(vertex1);
+        
+        assertEquals("expected new graph to have one vertex", 1, graph.vertices().size());
+        assertTrue("expected graph to contain the vertex", graph.vertices().contains(vertex1));
+    }
+    
     // covers graph size = n
     @Test
     public void testVerticesTwo() {
@@ -244,11 +266,8 @@ public abstract class GraphInstanceTest {
         assertTrue("expected graph to contain the vertex", graph.vertices().contains(vertex2));
     }
     
-    
-    
     // test sources()
     
-
     // covers graph size = 1
     //        edge num = 0
     @Test
@@ -258,7 +277,7 @@ public abstract class GraphInstanceTest {
         
         assertEquals("expected the vertex to contain zero sources", Collections.emptyMap(), graph.sources(vertex1));
     }
-
+    
     // covers graph size = n
     //        edge num = 1
     @Test
@@ -274,7 +293,6 @@ public abstract class GraphInstanceTest {
     }
     
     // covers edge num = n
-    //        graph size = n
     @Test
     public void testSourcesNEdges() {
         Graph<String> graph = emptyInstance();
@@ -290,11 +308,10 @@ public abstract class GraphInstanceTest {
         assertEquals("expected the vertex to contain two sources", sources, graph.sources(vertex2));
     }
     
-    
-    
     // test targets()
     
     // covers edge num = 0
+    //        graph size = 1
     @Test
     public void testTargetsZeroEdgesOneSize() {
         Graph<String> graph = emptyInstance();
@@ -303,7 +320,8 @@ public abstract class GraphInstanceTest {
         assertEquals("expected the vertex to contain zero targets", Collections.emptyMap(), graph.sources(vertex1));
     }
     
-    // covers graph size = n
+    // covers edge num = 1
+    //        graph size = n
     @Test
     public void testTargetsOneEdgeNSize() {
         Graph<String> graph = emptyInstance();
@@ -332,4 +350,3 @@ public abstract class GraphInstanceTest {
         assertEquals("expected the vertice to contain two targets", targets, graph.sources(vertex1));
     }
 }
-
