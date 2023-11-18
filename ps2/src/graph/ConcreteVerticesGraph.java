@@ -4,6 +4,8 @@
 package graph;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,43 +18,121 @@ import java.util.Set;
 public class ConcreteVerticesGraph implements Graph<String> {
     
     private final List<Vertex> vertices = new ArrayList<>();
-    
     // Abstraction function:
-    //   TODO
+    //   vertices represents a list graph with labelled immutable veritces
     // Representation invariant:
-    //   TODO
+    //   vertices contain alphabets and numbers only
     // Safety from rep exposure:
-    //   TODO
+    //   names of vertices are already immutable, but the object 
+    //   itself isn't so return a copy of the reference
     
     // TODO constructor
     
     // TODO checkRep
+    private void checkRep() {
+
+    }
+    
     
     @Override public boolean add(String vertex) {
-        throw new RuntimeException("not implemented");
+        for (Vertex _vertex : vertices) {
+            if (_vertex.getLabel() == vertex) return false;
+        }
+        vertices.add(new Vertex(vertex));
+
+        checkRep();
+        return true;
     }
     
     @Override public int set(String source, String target, int weight) {
-        throw new RuntimeException("not implemented");
+        int oldWeight = 0;
+
+        for (Vertex vertex : vertices) {
+            if (vertex.getLabel() == source) {
+                for (Vertex vertex2 : vertices) {
+                    if (vertex2.getLabel() == target) {
+                        oldWeight = vertex.connect(target, weight);
+                        return oldWeight;
+                    }
+                }
+                vertices.add(new Vertex(target));
+                oldWeight = vertex.connect(target, weight);
+                return oldWeight;
+            }
+        }
+
+        Vertex vertex = new Vertex(source);
+        vertices.add(vertex);
+        for (Vertex vertex2 : vertices) {
+            if (vertex2.getLabel() == target) {
+                oldWeight = vertex.connect(target, weight);
+                return oldWeight;
+            }
+        }
+        vertices.add(new Vertex(target));
+        oldWeight = vertex.connect(target, weight);
+
+        checkRep();
+        return oldWeight;
     }
     
     @Override public boolean remove(String vertex) {
-        throw new RuntimeException("not implemented");
+        Vertex deletee = null;
+        for (Vertex _vertex : vertices) {
+            if (_vertex.getLabel() == vertex) {
+                deletee = _vertex;
+                continue;
+            }
+
+            for (String label : _vertex.getMaps().keySet()) {
+                if (label == vertex) _vertex.disconnect(label);
+            }
+
+        }
+        checkRep();
+
+        if (deletee != null) {
+            vertices.remove(vertices.indexOf(deletee));
+            return true;
+        }
+        else return false;
     }
     
     @Override public Set<String> vertices() {
-        throw new RuntimeException("not implemented");
+        Set<String> labels = new HashSet<>();
+        for (Vertex vertex : vertices) {
+            labels.add(vertex.getLabel());
+        }
+        return labels;
     }
     
     @Override public Map<String, Integer> sources(String target) {
-        throw new RuntimeException("not implemented");
+        Map<String, Integer> sources = new HashMap<>();
+        for (Vertex vertex : vertices) {
+            if (vertex.getLabel() == target) continue;
+            for (String label : vertex.getMaps().keySet()) {
+                if (label == target) sources.put(label, vertex.getWeightOfConnection(target));
+            }
+        }
+        return sources;
     }
     
     @Override public Map<String, Integer> targets(String source) {
-        throw new RuntimeException("not implemented");
+        Map<String, Integer> targets = new HashMap<>();
+        for (Vertex vertex : vertices) {
+            if (vertex.getLabel() == source) {
+                for (String label : vertex.getMaps().keySet()) targets.put(label, vertex.getWeightOfConnection(source));
+            }
+        }
+        return targets;
     }
     
     // TODO toString()
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return super.toString();
+    }
     
 }
 
@@ -66,21 +146,97 @@ public class ConcreteVerticesGraph implements Graph<String> {
  */
 class Vertex {
     
-    // TODO fields
-    
+    private final char symbols[] = {'@', '!', '#', '%', '^', '&', '*'};
+    private String label;
+    private Map<String, Integer> maps = new HashMap<>();
+
     // Abstraction function:
-    //   TODO
+    //   represents a named point on a graph with wights
     // Representation invariant:
-    //   TODO
+    //   vertex label only contains alphabets and numbers
+    //   map weight always > 0
     // Safety from rep exposure:
-    //   TODO
+    //   label is a string so it is always immutable
+    //   map is mutable to use defensive copying to return maps of a vertex
     
     // TODO constructor
-    
+    public Vertex(String label) {
+        this.label = label;
+        checkRep();
+    }
+
     // TODO checkRep
+    private void checkRep() {
+        for (char symbol : symbols) assert this.label.charAt(0) == symbol;
+        for (Integer weight : maps.values()) assert weight > 0;
+    }
     
     // TODO methods
-    
+    /**
+     * Add a connection to another vertex in the graph.
+     * 
+     * @param label name of the vertex
+     * @param weight weight of the edge
+     * @return previous weight of the edge if it existed, zero otherwise
+     */
+    public int connect(String label, Integer weight) {
+        int oldWeight = 0;
+
+        if (maps.containsKey(label)) {
+            oldWeight = maps.get(label);
+            maps.put(label, weight);
+        }
+        else maps.put(label, weight);
+
+        checkRep();
+        return oldWeight;
+    }
+
+    /**
+     * Removes a connection to another vertex in the graph.
+     * 
+     * @param label name of the vertex
+     * @return true if the vertex existed and the rep is satisfied after removal, false if no such vertex was already connected to
+     */
+    public boolean disconnect(String label) {
+        if (maps.containsKey(label)) maps.remove(label);
+        else return false;
+
+        checkRep();
+        return true;
+    }
+
+    /**
+     * Get the name of the label
+     * @return name of the label
+     */
+    public String getLabel() {
+        return label;
+    }
+
+    /**
+     * Get the connecions of the vertex
+     * 
+     * @return a new map containing all connections of a vertex up to that point
+     */
+    public Map<String, Integer> getMaps(){
+        return new HashMap<String, Integer>(maps);
+    }
+
+    public Integer getWeightOfConnection(String label){
+        return new Integer(maps.get(label));
+    }
+
+
     // TODO toString()
-    
+    @Override
+    public String toString() {
+        String connectionMap = "";
+        connectionMap.concat(getLabel()).concat("\t->");
+        for (String label : maps.keySet()) {
+            connectionMap.concat(label).concat(", ");
+        }
+
+        return connectionMap;
+    }
 }

@@ -23,15 +23,24 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
     @Override public Graph<String> emptyInstance() {
         return new ConcreteVerticesGraph();
     }
-    
+
     /*
      * Testing ConcreteVerticesGraph...
+     * 
+     * vertices: 0, 1, n
+     * edges: 0, 1, n
      */
+
     
     // Testing strategy for ConcreteVerticesGraph.toString()
     //   TODO
     
     // TODO tests for ConcreteVerticesGraph.toString()
+    @Test
+        private void testAddZeroVertex() {
+        Graph<String> graph = emptyInstance();
+        assertEquals("Expected Empty", "", graph.toString());
+    }
     
     /*
      * Testing Vertex...
