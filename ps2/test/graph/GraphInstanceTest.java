@@ -43,8 +43,8 @@ public abstract class GraphInstanceTest {
     //      graph size = 0, n
     // 
     // sources():
-    //      edge num = 0, n
-    //      graph size = n
+    //      edge num = 0, 1, n
+    //      graph size = 1, n
     //
     // targets():
     //      edge num = 0, n
@@ -248,6 +248,17 @@ public abstract class GraphInstanceTest {
     
     // test sources()
     
+
+    // covers graph size = 1
+    //        edge num = 0
+    @Test
+    public void testSourcesZeroEdgesOneSize() {
+        Graph<String> graph = emptyInstance();
+        graph.add(vertex1);
+        
+        assertEquals("expected the vertex to contain zero sources", Collections.emptyMap(), graph.sources(vertex1));
+    }
+
     // covers graph size = n
     //        edge num = 1
     @Test
@@ -263,6 +274,7 @@ public abstract class GraphInstanceTest {
     }
     
     // covers edge num = n
+    //        graph size = n
     @Test
     public void testSourcesNEdges() {
         Graph<String> graph = emptyInstance();
@@ -283,7 +295,6 @@ public abstract class GraphInstanceTest {
     // test targets()
     
     // covers edge num = 0
-    //        graph size = 1
     @Test
     public void testTargetsZeroEdgesOneSize() {
         Graph<String> graph = emptyInstance();
@@ -292,8 +303,7 @@ public abstract class GraphInstanceTest {
         assertEquals("expected the vertex to contain zero targets", Collections.emptyMap(), graph.sources(vertex1));
     }
     
-    // covers edge num = 1
-    //        graph size = n
+    // covers graph size = n
     @Test
     public void testTargetsOneEdgeNSize() {
         Graph<String> graph = emptyInstance();
