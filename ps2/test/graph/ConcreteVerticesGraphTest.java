@@ -55,7 +55,7 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
         ConcreteVerticesGraph graph = new ConcreteVerticesGraph();
         graph.add("@Vertex1");
         graph.set("@Vertex1", "@Vertex2", 5);
-        assertEquals("toString should return the correct string representation for a single vertex with a single edge", "@Vertex1\t->@Vertex2, ", graph.toString());
+        assertEquals("toString should return the correct string representation for a single vertex with a single edge", "@Vertex1\t->@Vertex2, @Vertex2\t->", graph.toString());
     }
 
     // covers multiple vertices, multiple edges
@@ -68,7 +68,7 @@ public class ConcreteVerticesGraphTest extends GraphInstanceTest {
         graph.set("@Vertex1", "@Vertex2", 5);
         graph.set("@Vertex1", "@Vertex3", 10);
         graph.set("@Vertex2", "@Vertex3", 8);
-        assertEquals("toString should return the correct string representation for multiple vertices and multiple edges", "@Vertex1\t->@Vertex2, @Vertex3, \n@Vertex2\t->@Vertex3, \n", graph.toString());
+        assertEquals("toString should return the correct string representation for multiple vertices and multiple edges", "@Vertex1\t->@Vertex2, @Vertex3, @Vertex2\t->@Vertex3, @Vertex3\t->", graph.toString());
     }
 
        

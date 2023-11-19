@@ -28,10 +28,15 @@ public class ConcreteVerticesGraph implements Graph<String> {
     //   itself isn't so return a copy of the reference
     
     // TODO constructor
+    public ConcreteVerticesGraph() {
+
+    }
     
     // TODO checkRep
     private void checkRep() {
-    	
+    	for (Vertex vertex : vertices) {
+			assert vertex != null;
+		}
     }
     
     
@@ -53,11 +58,13 @@ public class ConcreteVerticesGraph implements Graph<String> {
                 for (Vertex vertex2 : vertices) {
                     if (vertex2.getLabel() == target) {
                         oldWeight = vertex.connect(target, weight);
+                        checkRep();
                         return oldWeight;
                     }
                 }
                 vertices.add(new Vertex(target));
                 oldWeight = vertex.connect(target, weight);
+                checkRep();
                 return oldWeight;
             }
         }
@@ -67,6 +74,7 @@ public class ConcreteVerticesGraph implements Graph<String> {
         for (Vertex vertex2 : vertices) {
             if (vertex2.getLabel() == target) {
                 oldWeight = vertex.connect(target, weight);
+                checkRep();
                 return oldWeight;
             }
         }
@@ -112,7 +120,7 @@ public class ConcreteVerticesGraph implements Graph<String> {
         for (Vertex vertex : vertices) {
             if (vertex.getLabel() == target) continue;
             for (String label : vertex.getMaps().keySet()) {
-                if (label == target) sources.put(label, vertex.getWeightOfConnection(target));
+                if (label == target) sources.put(vertex.getLabel(), vertex.getWeightOfConnection(target));
             }
         }
         return sources;
@@ -122,7 +130,7 @@ public class ConcreteVerticesGraph implements Graph<String> {
         Map<String, Integer> targets = new HashMap<>();
         for (Vertex vertex : vertices) {
             if (vertex.getLabel() == source) {
-                for (String label : vertex.getMaps().keySet()) targets.put(label, vertex.getWeightOfConnection(source));
+                for (String label : vertex.getMaps().keySet()) targets.put(label, vertex.getWeightOfConnection(label));
             }
         }
         return targets;
@@ -172,12 +180,7 @@ class Vertex {
         checkRep();
     }
 
-//    // TODO checkRep
-//    private void checkRep() {
-//        for (char symbol : symbols) assert this.label.charAt(0) == symbol;
-//        for (Integer weight : maps.values()) assert weight > 0;
-//    }
-    
+    // TODO checkRep
     public void checkRep() {
         // Check if the first character of the label is one of the allowed symbols
         char firstChar = this.label.charAt(0);
@@ -266,6 +269,8 @@ class Vertex {
         for (String label : sortedMap.keySet()) {
             connectionMap = connectionMap.concat(label).concat(", ");
         }
+        
+        connectionMap.concat("\n");
 
         return connectionMap;
     }

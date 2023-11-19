@@ -317,7 +317,7 @@ public abstract class GraphInstanceTest {
         Graph<String> graph = emptyInstance();
         graph.add(vertex1);
         
-        assertEquals("expected the vertex to contain zero targets", Collections.emptyMap(), graph.sources(vertex1));
+        assertEquals("expected the vertex to contain zero targets", Collections.emptyMap(), graph.targets(vertex1));
     }
     
     // covers edge num = 1
