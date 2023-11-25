@@ -3,8 +3,14 @@
  */
 package poet;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 import graph.Graph;
 
@@ -55,11 +61,12 @@ public class GraphPoet {
     private final Graph<String> graph = Graph.empty();
     
     // Abstraction function:
-    //   TODO
+    //   represents the graph of words given in the corpus
     // Representation invariant:
-    //   TODO
+    //   the graph vertices are case-insensitive non-newline, characters
     // Safety from rep exposure:
-    //   TODO
+    //   since the graph field is private final, the reference shall be 
+    //   returned as a defensive copy
     
     /**
      * Create a new poet with the graph from corpus (as described above).
@@ -68,7 +75,38 @@ public class GraphPoet {
      * @throws IOException if the corpus file cannot be found or read
      */
     public GraphPoet(File corpus) throws IOException {
-        throw new RuntimeException("not implemented");
+        // read file and add words to wordList
+        List<String> wordList = new ArrayList<>();
+        Scanner s = new Scanner(new BufferedReader(new FileReader(corpus)));
+        while (s.hasNext()) {
+          wordList.add(s.next());
+        }
+        s.close();
+        // convert to lower case
+        for (int i=0; i < wordList.size(); i++) {
+            wordList.set(i, wordList.get(i).toLowerCase());
+        }
+        // add words to graph
+        for (String word : wordList) {
+            if (!graph.vertices().contains(word)) {
+                graph.add(word);
+            }
+        }
+        // set edges
+        for (int i = 0; i < wordList.size()-1; i++) {
+            String src = wordList.get(i);
+            String trg = wordList.get(i+1);
+            Map<String, Integer> targets = graph.targets(src);
+            
+            if (targets.containsKey(trg)) {
+                int oldWeight = targets.get(trg);
+                graph.set(src, trg, oldWeight + 1);
+            }
+            else {
+                graph.set(src, trg, 1);
+            }
+        }
+        checkRep();
     }
     
     // TODO checkRep
