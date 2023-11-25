@@ -8,8 +8,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Scanner;
 
 import graph.Graph;
@@ -111,6 +117,17 @@ public class GraphPoet {
     
     // TODO checkRep
     
+    // Check that the rep invariant is true
+    private void checkRep() {
+        for (String vertex : graph.vertices()) {
+            String copy = vertex.toLowerCase().trim().replaceAll("\\s+", "");
+            
+            assert vertex.equals(copy);
+            assert !vertex.equals("");
+        }
+    }
+    
+    // methods
     /**
      * Generate a poem.
      * 
@@ -118,9 +135,49 @@ public class GraphPoet {
      * @return poem (as described above)
      */
     public String poem(String input) {
-        throw new RuntimeException("not implemented");
+        List<String> inputList = Arrays.asList(input.trim().split("\\s+"));
+        List<String> result = new ArrayList<>();
+        
+        for (int i = 0; i < inputList.size()-1; i++) {
+            String bridge = "";
+            String src = inputList.get(i).toLowerCase();
+            String trg = inputList.get(i+1).toLowerCase();
+            Map<String, Integer> trgSources = graph.sources(trg);
+            Map<String, Integer> srcTargets = graph.targets(src);
+            Set<String> s1 = new HashSet<>(trgSources.keySet());
+            Set<String> s2 = new HashSet<>(srcTargets.keySet());
+            
+            // keys common to both maps
+            Set<String> commonKeys = new HashSet<String>(s2);
+            commonKeys.retainAll(s1);
+            
+            // find highest-weighted bridge words
+            Map<String, Integer> bridgeMap = new HashMap<>();
+            if (commonKeys.size() > 0) {
+                for (String bridgeKey: commonKeys) {
+                    int totalWeight = srcTargets.get(bridgeKey) + trgSources.get(bridgeKey);
+                    bridgeMap.put(bridgeKey, totalWeight);
+                }
+                List<Map.Entry<String, Integer>> nameList = new ArrayList<>(bridgeMap.entrySet());
+                Collections.sort(nameList, new Comparator<Map.Entry<String, Integer>>() {
+                    public int compare(Map.Entry<String, Integer> entry1, Map.Entry<String, Integer> entry2) {
+                        return -entry1.getValue().compareTo(entry2.getValue());
+                    }
+                });
+                bridge = nameList.get(0).getKey();
+            }
+            result.add(inputList.get(i));
+            if(!bridge.equals("")) {
+                result.add(bridge);
+            }
+        }
+        result.add(inputList.get(inputList.size()-1));
+        checkRep();
+        return String.join(" ", result);
     }
     
     // TODO toString()
-    
+    @Override public String toString() {
+        return graph.toString();
+    }
 }
