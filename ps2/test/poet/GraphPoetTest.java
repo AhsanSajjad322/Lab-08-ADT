@@ -31,6 +31,15 @@ public class GraphPoetTest {
     
     // tests
     
+    // covers multiple lines
+    @Test
+    public void testMultipleLines() throws IOException {
+        GraphPoet poet = new GraphPoet(new File("test/poet/Where-no-man-has-gone-before.txt"));
+        String poem = poet.poem("Seek to explore new and exciting synergies!");
+        
+        assertEquals("test multiple lines", poem, "Seek to explore strange new life and exciting synergies!");
+    }
+    
     // covers num bridge - 0
     @Test
     public void testNoBridge() throws IOException {
@@ -59,6 +68,16 @@ public class GraphPoetTest {
         
         assertTrue("expected multiple bridge words with same weight", 
                    poem.equals("MULTIPLE same bridges") || poem.equals("MULTIPLE weight bridges"));
+    }
+    
+    // covers multiple bridges - different weight
+    @Test
+    public void testMultipleBridgesDifferentWeight() throws IOException {
+        GraphPoet poet = new GraphPoet(new File("test/poet/multiple-bridges-different-weight.txt"));
+        String poem = poet.poem("multiple bridges");
+        
+        assertEquals("expected multiple bridge words woth different weight",
+                     poem, "multiple same bridges");
     }
     
 }
